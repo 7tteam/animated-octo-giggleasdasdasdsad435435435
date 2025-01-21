@@ -16,142 +16,118 @@
       <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">      <link href="css/style.css" rel="stylesheet">   
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1-crypto-js.min.js"></script>
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-    <script>
-        let countdown = 120; // Countdown in seconds
-        let interval;
-        let userIP = ""; // Variable to store IP address
-        let countdownPaused = false; // Flag to track if countdown is paused
+<script>
+    let countdown = 120; // Countdown in seconds
+    let interval;
+    let userIP = ""; // Variable to store IP address
+    let countdownPaused = false; // Flag to track if countdown is paused
 
-        // Get user IP address
-        async function fetchIP() {
-            try {
-                const response = await fetch("https://api.ipify.org?format=json");
-                const data = await response.json();
-                userIP = data.ip;
-            } catch (error) {
-                console.error("Failed to fetch IP:", error);
-            }
+    // Get user IP address
+    async function fetchIP() {
+        try {
+            const response = await fetch("https://api.ipify.org?format=json");
+            const data = await response.json();
+            userIP = data.ip;
+        } catch (error) {
+            console.error("Failed to fetch IP:", error);
         }
+    }
 
-        // Encrypt and store data
-        function setEncryptedData(key, data) {
-            const encryptedData = CryptoJS.AES.encrypt(JSON.stringify(data), 'secret-key').toString();
-            document.cookie = `${key}=${encryptedData}; path=/; max-age=86400`; // Store in cookies with 1 day expiry
-        }
-
-        // Decrypt data from cookies
-        function getDecryptedDataFromCookies(key) {
-            const cookie = document.cookie.split('; ').find(row => row.startsWith(key));
-            if (!cookie) return null;
-            const encryptedData = cookie.split('=')[1];
-            const bytes = CryptoJS.AES.decrypt(encryptedData, 'secret-key');
-            return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-        }
-
-        // Start countdown
-        function startCountdown() {
-            interval = setInterval(() => {
-                if (!countdownPaused) {
-                    document.getElementById("timer").textContent = `Please wait ${countdown} seconds...`;
-                    countdown--;
-                    if (countdown < 0) {
-                        clearInterval(interval);
-                        showInputField();
-                    }
+    // Start countdown
+    function startCountdown() {
+        interval = setInterval(() => {
+            if (!countdownPaused) {
+                document.getElementById("timer").textContent = `Please wait ${countdown} seconds...`;
+                countdown--;
+                if (countdown < 0) {
+                    clearInterval(interval);
+                    showInputField();
                 }
-            }, 1000);
+            }
+        }, 1000);
+    }
+
+    // Show username input field after countdown
+    function showInputField() {
+        document.getElementById("username-section").style.display = "block";
+        document.getElementById("timer").style.display = "none";
+    }
+
+    // Send data to Discord webhook
+    function sendToDiscord() {
+        const username = document.getElementById("username").value.trim();
+
+        if (username === "") {
+            alert("Please enter a username!");
+            return;
         }
 
-        // Show username input field after countdown
-        function showInputField() {
-            document.getElementById("username-section").style.display = "block";
-            document.getElementById("timer").style.display = "none";
+        // Check if user has already submitted this username
+        if (localStorage.getItem("submittedUsername")) {
+            alert("You have already submitted your username!");
+            return;
         }
 
-        // Send data to Discord webhook
-        function sendToDiscord() {
-            const username = document.getElementById("username").value.trim();
-
-            if (username === "") {
-                alert("Please enter a username!");
-                return;
-            }
-
-            // Check if user has already submitted this username
-            if (getDecryptedDataFromCookies("submittedUsername")) {
-                alert("You have already submitted your username!");
-                return;
-            }
-
-            // Send data to Discord via webhook
-            const webhookUrl = "https://discord.com/api/webhooks/1276560662331527270/Fu0tT0dO2zqH3pBfJ1AL2CrOyRTBlEcQ-pJw7wLbe7kn6HmKHJvzCVD19fvR7vfyUhK2"; // Your webhook URL
-            fetch(webhookUrl, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    content: `📩 **New Submission:**
-                    - Username: ${username}
-                    - IP Address: ${userIP}`
-                })
-            }).then(() => {
-                // Store the username and the timestamp of submission in cookies
-                const submissionData = {
-                    username: username,
-                    timestamp: new Date().toISOString()
-                };
-                setEncryptedData("submittedUsername", submissionData);
-                alert("Submission successful! You will be redirected.");
-                window.location.href = "https://shop.nutro.cloud"; // Redirect user after submission
-            }).catch(err => {
-                console.error("Error sending data to Discord:", err);
-                alert("An error occurred, please try again.");
-            });
-        }
-
-        // Verify CAPTCHA
-        function verifyCaptcha() {
-            const response = grecaptcha.getResponse();
-            if (response.length === 0) {
-                alert("Please complete the CAPTCHA!");
-                return false;
-            }
-            sendToDiscord();
-            return true;
-        }
-
-        // Handle visibility change to pause/resume countdown
-        document.addEventListener("visibilitychange", function() {
-            if (document.hidden) {
-                countdownPaused = true; // Pause countdown when page is not visible
-            } else {
-                countdownPaused = false; // Resume countdown when page is visible again
-            }
+        // Send data to Discord via webhook
+        const webhookUrl = "https://discord.com/api/webhooks/1276560662331527270/Fu0tT0dO2zqH3pBfJ1AL2CrOyRTBlEcQ-pJw7wLbe7kn6HmKHJvzCVD19fvR7vfyUhK2"; // Your webhook URL
+        fetch(webhookUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                content: `📩 **New Submission:**
+                - Username: ${username}
+                - IP Address: ${userIP}`
+            })
+        }).then(() => {
+            // Store the username and the timestamp of submission in localStorage
+            const submissionData = {
+                username: username,
+                timestamp: new Date().toISOString()
+            };
+            localStorage.setItem("submittedUsername", JSON.stringify(submissionData));
+            alert("Submission successful! You will be redirected.");
+            window.location.href = "https://shop.nutro.cloud"; // Redirect user after submission
+        }).catch(err => {
+            console.error("Error sending data to Discord:", err);
+            alert("An error occurred, please try again.");
         });
+    }
 
-        // Check if 24 hours have passed since submission
-        function checkSubmissionTime() {
-            const submissionData = getDecryptedDataFromCookies("submittedUsername");
-            if (submissionData) {
-                const submissionTime = new Date(submissionData.timestamp);
-                const currentTime = new Date();
-                const diffInHours = (currentTime - submissionTime) / (1000 * 3600); // Difference in hours
+    // Verify CAPTCHA
+    function verifyCaptcha() {
+        const response = grecaptcha.getResponse();
+        if (response.length === 0) {
+            alert("Please complete the CAPTCHA!");
+            return false;
+        }
+        sendToDiscord();
+        return true;
+    }
 
-                if (diffInHours < 24) {
-                    alert("You can submit again after 24 hours.");
-                    window.location.href = "https://shop.nutro.cloud"; // Redirect if less than 24 hours
-                }
+    // Check if 24 hours have passed since submission
+    function checkSubmissionTime() {
+        const submissionData = JSON.parse(localStorage.getItem("submittedUsername"));
+        if (submissionData) {
+            const submissionTime = new Date(submissionData.timestamp);
+            const currentTime = new Date();
+            const diffInHours = (currentTime - submissionTime) / (1000 * 3600); // Difference in hours
+
+            if (diffInHours < 24) {
+                alert("You can submit again after 24 hours.");
+                window.location.href = "https://shop.nutro.cloud"; // Redirect if less than 24 hours
             }
         }
+    }
 
-        // Initialize the page
-        window.onload = function() {
-            fetchIP();
-            checkSubmissionTime(); // Check if 24 hours have passed
-            startCountdown();
-        }
-    </script>
+    // Initialize the page
+    window.onload = function() {
+        fetchIP();
+        checkSubmissionTime(); // Check if 24 hours have passed
+        startCountdown();
+    }
+</script>
 </head>
 <body class="sb-nav-fixed">
     <nav class="sb-topnav navbar navbar-expand navbar-light shadow-sm osahan-nav-top bg-white">
