@@ -260,30 +260,7 @@
    <main>
    <div class="container-fluid-fluid">
     <!-- Navigation -->
-<div id="adblock-message">
-    <p>يبدو أنك تستخدم أداة حظر الإعلانات. من فضلك قم بتعطيل أداة حظر الإعلانات لعرض المحتوى بشكل صحيح.</p>
-</div>
 
-<script>
-    // التحقق من وجود أداة حظر الإعلانات
-    function checkAdBlock() {
-        const adElement = document.querySelector('.adsbygoogle');
-        
-        // تأخير التحليل حتى يتم تحميل الإعلان
-        setTimeout(function() {
-            // إذا لم يظهر الإعلان بعد التأخير، يُعتبر أن AdBlock مفعل
-            if (!adElement || adElement.offsetHeight === 0) {
-                // عرض الرسالة
-                document.getElementById('adblock-message').style.display = 'block';
-                // تحويل المستخدم إلى صفحة خاصة بأداة حظر الإعلانات بعد 3 ثواني
-                window.location.href = 'https://nutro.cloud/adblock'; // استبدل هذا برابط صفحة إعادة التوجيه
-            }
-        }, 10000); // الانتظار لمدة ثانية للتأكد من أن الإعلان لم يظهر
-    }
-
-    // تنفيذ التحقق
-    checkAdBlock();
-</script>
 
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9474857494274232"
      crossorigin="anonymous"></script>
