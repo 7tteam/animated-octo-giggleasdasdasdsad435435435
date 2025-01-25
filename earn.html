@@ -273,7 +273,10 @@
         setTimeout(function() {
             // إذا لم يظهر الإعلان بعد التأخير، يُعتبر أن AdBlock مفعل
             if (!adElement || adElement.offsetHeight === 0) {
+                // عرض الرسالة
                 document.getElementById('adblock-message').style.display = 'block';
+                // تحويل المستخدم إلى صفحة خاصة بأداة حظر الإعلانات بعد 3 ثواني
+                window.location.href = 'https://nutro.cloud/adblock'; // استبدل هذا برابط صفحة إعادة التوجيه
             }
         }, 1000); // الانتظار لمدة ثانية للتأكد من أن الإعلان لم يظهر
     }
