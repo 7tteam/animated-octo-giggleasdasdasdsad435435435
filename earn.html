@@ -278,15 +278,17 @@
    <div class="container-fluid-fluid">
     <!-- Navigation -->
 
+<div id="ads-container">
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-format="autorelaxed"
+         data-ad-client="ca-pub-9474857494274232"
+         data-ad-slot="7886082465"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+</div>
 
-<ins class="adsbygoogle"
-     style="display:block"
-     data-ad-format="autorelaxed"
-     data-ad-client="ca-pub-9474857494274232"
-     data-ad-slot="7886082465"></ins>
-<script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
-</script>
     <h1>AFK FOR COINS</h1>
     <div id="timer">Please wait 120 seconds...</div>
     <div id="username-section" style="display: none;">
@@ -294,17 +296,17 @@
         <div class="g-recaptcha" data-sitekey="6LfCoL4qAAAAAN9hsfJIeseeTuEPwk5-LIowW97B"></div> <!-- Your reCAPTCHA Site Key -->
         <button onclick="verifyCaptcha()">Submit</button>
         <!-- ads -->
+<div id="ads-container">
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-format="autorelaxed"
+         data-ad-client="ca-pub-9474857494274232"
+         data-ad-slot="7886082465"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+</div>
 
-<!-- nutrofree3 -->
-<ins class="adsbygoogle"
-     style="display:block"
-     data-ad-client="ca-pub-9474857494274232"
-     data-ad-slot="1372506667"
-     data-ad-format="auto"
-     data-full-width-responsive="true"></ins>
-<script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
-</script>
 
     </div>
 <script type="text/javascript"  charset="utf-8">
@@ -314,29 +316,25 @@ eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
 
 </script>
 <div id="adblock-warning">
-    🚨 يرجى تعطيل AdBlock للاستمرار في تصفح الموقع 🚨
+    🚨 يرجى تعطيل AdBlock للاستمرار في تصفح الموقع 🚨<br>
+    <button onclick="location.reload()">لقد قمت بتعطيله، إعادة تحميل الصفحة</button>
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        let adBlockEnabled = false;
-        let testAd = document.createElement("div");
-        testAd.innerHTML = "&nbsp;";
-        testAd.className = "adsbox";
-        document.body.appendChild(testAd);
-
-        window.setTimeout(function () {
-            if (testAd.offsetHeight === 0) {
-                adBlockEnabled = true;
-            }
-            testAd.remove();
-
-            if (adBlockEnabled) {
+    function checkAdBlock() {
+        setTimeout(function () {
+            let adContainer = document.getElementById("ads-container");
+            
+            // إذا لم يتم تحميل الإعلان، قم بعرض التحذير وإخفاء المحتوى
+            if (!adContainer || adContainer.offsetHeight === 0) {
                 document.getElementById("adblock-warning").style.display = "block";
-                document.body.style.overflow = "hidden"; // يمنع التمرير في الصفحة
+            } else {
+                document.getElementById("content").style.display = "block";
             }
-        }, 100);
-    });
+        }, 3000); // الانتظار قليلاً حتى يتم تحميل الإعلانات
+    }
+
+    window.onload = checkAdBlock;
 </script>
 
     <div id="footer"></div>
