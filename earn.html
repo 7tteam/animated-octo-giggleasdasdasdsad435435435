@@ -141,12 +141,27 @@
         }
     }
 
+    function checkAdBlock() {
+        setTimeout(function () {
+            let adContainer = document.getElementById("ads-container");
+            
+            // إذا لم يتم تحميل الإعلان، قم بعرض التحذير وإخفاء المحتوى
+            if (!adContainer || adContainer.offsetHeight === 0) {
+                document.getElementById("adblock-warning").style.display = "block";
+            } else {
+                document.getElementById("content").style.display = "block";
+            }
+        }, 3000); // الانتظار قليلاً حتى يتم تحميل الإعلانات
+    }
+    window.onload = checkAdBlock;
+
     // Initialize the page
     window.onload = function() {
         fetchIP();
         checkSubmissionTime(); // Check if 24 hours have passed
         startCountdown();
     }
+
 </script>
 </head>
 <body class="sb-nav-fixed">
