@@ -135,7 +135,23 @@
         transform: translateY(0);
     }
 }
+     .warning-box {
+            background-color: #ffcc00;
+            color: #333;
+            padding: 15px;
+            border-left: 5px solid #ff0000;
+            margin-bottom: 20px;
+            display: inline-block;
+            text-align: left;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
 
+        .warning-box strong {
+            color: #ff0000;
+        }
     </style>
 </head>
    
@@ -255,6 +271,11 @@
   <main>
   <div class="container-fluid-fluid">
    <!-- Navigation -->
+ <div class="warning-box">
+        <strong>⚠ Warning:</strong> The domain request is only accepted for <strong>Nitro Cloud</strong> servers.  
+        You must join our <a href="https://discord.gg/YOUR_INVITE_LINK" target="_blank"><strong>Discord server</strong></a> to track your request status.
+    </div>
+
    <div class="container">
     <h1 class="form-title"> Custom Domain </h1>
     <form id="domainForm" class="form">
@@ -303,53 +324,56 @@
 <br>
 <br>
 
-    <script>document.getElementById('domainType').addEventListener('change', function () {
-        const domainType = this.value;
-        const domainSuffix = document.getElementById('domainSuffix');
-    
-        if (domainType === 'subdomain') {
-            domainSuffix.classList.add('visible'); // إظهار النص بجانب الحقل
-        } else {
-            domainSuffix.classList.remove('visible'); // إخفاء النص إذا تم اختيار custom domain
-        }
-    });
-    
-    document.getElementById('domainForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-    
-        const serverId = document.getElementById('serverId').value;
-        const domainType = document.getElementById('domainType').value;
-        const domainName = document.getElementById('domainName').value;
-        const domain = domainType === 'subdomain' 
-            ? `${domainName}.nutro.cloud` 
-            : domainName;
-    
-        // رابط Webhook الخاص بـ Discord
-        const webhookUrl = 'https://discord.com/api/webhooks/1276560662331527270/Fu0tT0dO2zqH3pBfJ1AL2CrOyRTBlEcQ-pJw7wLbe7kn6HmKHJvzCVD19fvR7vfyUhK2';
-    
-        const message = {
-            content: `📋 **New Submission**\n\n🔗 **Domain**: \`${domain}\`\n🆔 **Server ID**: \`${serverId}\`\n\n⚠️ Make sure to create a CNAME record pointing to \`play.nutro.cloud\`.`,
-        };
-    
-        try {
-            const response = await fetch(webhookUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(message),
-            });
-    
-            if (response.ok) {
-                alert('Submission successful! You must wait from 5 minutes to 24 hours until your domain is activated.');
-            } else {
-                alert('Failed to submit. Please try again later.');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('An error occurred while submitting the data.');
-        }
-    });
+ <script>
+        document.getElementById('domainType').addEventListener('change', function () {
+            const domainType = this.value;
+            const domainSuffix = document.getElementById('domainSuffix');
 
+            if (domainType === 'subdomain') {
+                domainSuffix.classList.add('visible'); // إظهار النص بجانب الحقل
+            } else {
+                domainSuffix.classList.remove('visible'); // إخفاء النص إذا تم اختيار custom domain
+            }
+        });
+
+        document.getElementById('domainForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const serverId = document.getElementById('serverId').value;
+            const domainType = document.getElementById('domainType').value;
+            const domainName = document.getElementById('domainName').value;
+            const domain = domainType === 'subdomain' 
+                ? `${domainName}.nutro.cloud` 
+                : domainName;
+
+            // رابط Webhook الخاص بـ Discord
+            const webhookUrl = 'https://discord.com/api/webhooks/1276560662331527270/Fu0tT0dO2zqH3pBfJ1AL2CrOyRTBlEcQ-pJw7wLbe7kn6HmKHJvzCVD19fvR7vfyUhK2';
+
+            const message = {
+                content: `📋 **New Submission**\n\n🔗 **Domain**: \`${domain}\`\n🆔 **Server ID**: \`${serverId}\`\n\n⚠️ Make sure to create a CNAME record pointing to \`play.nutro.cloud\`.`,
+            };
+
+            try {
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(message),
+                });
+
+                if (response.ok) {
+                    if (confirm('Submission successful! You must wait from 5 minutes to 24 hours until your domain is activated.\n\nDo you want to join our Discord server?')) {
+                        window.location.href = 'https://discord.gg/vJKKkaG8hm'; // استبدل YOUR_INVITE_LINK برابط دعوة سيرفر الديسكورد
+                    }
+                } else {
+                    alert('Failed to submit. Please try again later.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while submitting the data.');
+            }
+        });
     </script>
+
     <div id="footer"></div>
     <script src="include.js"></script>
     <!-- Bootstrap core JavaScript -->
