@@ -34,30 +34,91 @@
         z-index: 999999;
         padding-top: 20%;
     }
-   .title {
-            font-size: 2.5rem;
+    /* تصميم الكارد الأساسي */
+        .container {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(255, 204, 0, 0.3);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        /* أنميشن الظهور */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* العنوان الأساسي */
+        .title {
+            font-size: 2rem;
             font-weight: bold;
             background: linear-gradient(90deg, #ffcc00, #ff6600);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-shadow: 2px 2px 10px rgba(255, 204, 0, 0.5);
-            animation: glow 2s infinite alternate;
         }
 
-        @keyframes glow {
-            from {
-                text-shadow: 2px 2px 10px rgba(255, 204, 0, 0.5);
-            }
-            to {
-                text-shadow: 2px 2px 20px rgba(255, 102, 0, 0.8);
-            }
-        }
-
+        /* العنوان الفرعي */
         .subtitle {
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             color: #ffcc00;
-            margin-top: 10px;
-            opacity: 0.8;
+            margin-bottom: 15px;
+        }
+
+        /* تصميم التايمر */
+        #timer {
+            font-size: 1.2rem;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(255, 204, 0, 0.2);
+            color: #ffcc00;
+            font-weight: bold;
+        }
+
+        /* تصميم قسم إدخال اسم المستخدم */
+        #username-section {
+            display: none;
+            margin-top: 15px;
+        }
+
+        /* حقل الإدخال */
+        input {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            text-align: center;
+            margin-bottom: 10px;
+            outline: none;
+        }
+
+        /* زر الإرسال */
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: #ffcc00;
+            color: black;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        /* تأثير الزر عند التحويل */
+        button:hover {
+            background: #ff9900;
+        }
+
+        /* تصميم reCAPTCHA */
+        .g-recaptcha {
+            margin: 10px auto;
         }
 </style>
 
@@ -317,17 +378,17 @@
     </script>
 </div>
 
-     <div>
+     <div class="container">
         <h1 class="title">AFK FOR COINS</h1>
         <p class="subtitle">Earn rewards daily!</p>
-    </div>  
-    <div id="timer">Please wait 120 seconds...</div>
-    <div id="username-section" style="display: none;">
-        <input type="text" id="username" placeholder="Enter your username">
-        <div class="g-recaptcha" data-sitekey="6LfCoL4qAAAAAN9hsfJIeseeTuEPwk5-LIowW97B"></div> <!-- Your reCAPTCHA Site Key -->
-        <button onclick="verifyCaptcha()">Submit</button>
-        <!-- ads -->
 
+        <div id="timer">Please wait 120 seconds...</div>
+
+        <div id="username-section">
+            <input type="text" id="username" placeholder="Enter your username">
+            <div class="g-recaptcha" data-sitekey="6LfCoL4qAAAAAN9hsfJIeseeTuEPwk5-LIowW97B"></div> 
+            <button onclick="verifyCaptcha()">Submit</button>
+        </div>
     </div>
 
 
