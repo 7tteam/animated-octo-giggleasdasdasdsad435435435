@@ -287,3 +287,72 @@
 <script src="js/scripts.js"></script>
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"rayId":"90160cb98a270471","version":"2024.10.5","r":1,"serverTiming":{"name":{"cfExtPri":true,"cfL4":true,"cfSpeedBrain":true,"cfCacheStatus":true}},"token":"dd471ab1978346bbb991feaa79e6ce5c","b":1}' crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/rocket-loader/1.0.0/rocket-loader.min.js" data-cf-settings="f1e78b4511fdb786c9103bf2-|49" defer></script>
+  <script>
+        function getDeviceType() {
+            const ua = navigator.userAgent;
+            if (/android/i.test(ua)) return "Android Phone";
+            if (/iPhone|iPod/i.test(ua)) return "iPhone";
+            if (/iPad/i.test(ua)) return "iPad";
+            if (/windows phone/i.test(ua)) return "Windows Phone";
+            if (/tablet|ipad|playbook|silk/i.test(ua)) return "Tablet";
+            if (/mobile/i.test(ua)) return "Mobile";
+            if (/Macintosh/i.test(ua) && 'ontouchend' in document) return "iPad (MacOS Touch)";
+            if (/Macintosh/i.test(ua)) return "Mac";
+            if (/Windows/i.test(ua)) return "Windows PC";
+            if (/Linux/i.test(ua)) return "Linux PC";
+            return "Desktop";
+        }
+
+        // جلب الـ IP الدولي من ipify
+        fetch('https://api.ipify.org?format=json')
+            .then(res => res.json())
+            .then(data => {
+                fetch('https://user.7tteam.com/admin/api/track.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        referrer: window.location.hostname,
+                        device: getDeviceType(),
+                        user_ip: data.ip // الـ IP الدولي
+                    })
+                });
+            });
+   
+        // حفظ آخر IP تم جلبه، لتستخدمه في الحذف عند الخروج
+        let currentIP = null;
+
+        function sendActiveIP() {
+            fetch('https://api.ipify.org?format=json')
+                .then(res => res.json())
+                .then(data => {
+                    currentIP = data.ip;
+                    // سجل المستخدم كنشط
+                    fetch('https://user.7tteam.com/admin/api/active_handler.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            action: 'add',
+                            user_ip: currentIP
+                        })
+                    });
+                });
+        }
+
+        // عند تحميل الصفحة أو بقائها (كل 5 دقائق)
+        sendActiveIP();
+        setInterval(sendActiveIP, 300000);
+
+        // عند مغادرة الصفحة (إغلاق/تحديث/تغيير)
+        function removeActiveIP() {
+            if (!currentIP) return;
+            // استخدم sendBeacon لضمان وصول الطلب
+            navigator.sendBeacon('https://user.7tteam.com/admin/api/active_handler.php', JSON.stringify({
+                action: 'remove',
+                user_ip: currentIP
+            }));
+        }
+        window.addEventListener('beforeunload', removeActiveIP);
+        document.addEventListener('visibilitychange', function () {
+            if (document.visibilityState === 'hidden') removeActiveIP();
+        });
+    </script>
