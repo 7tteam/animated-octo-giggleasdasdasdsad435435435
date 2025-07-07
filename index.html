@@ -377,3 +377,14 @@
             if (document.visibilityState === 'hidden') removeActiveIP();
         });
     </script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const toggle = document.getElementById("sidebarToggle");
+    const body = document.body;
+
+    toggle.addEventListener("click", function (e) {
+      e.preventDefault();
+      body.classList.toggle("sb-sidenav-toggled");
+    });
+  });
+</script>
