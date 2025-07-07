@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+    <script>
+        async function doLogin() {
+            // الحصول على التوكن من الرابط
+            const params = new URLSearchParams(window.location.search);
+            const token = params.get("token");
+            if (!token) {
+                document.getElementById("msg").innerText = "No token!";
+                return;
+            }
+            // إرسال التوكن للباك اند
+            let res = await fetch("https://YOUR_SERVER_DOMAIN/login.php", {
+                method: "POST",
+                credentials: "include", // ضروري لإرسال الكوكيز بين السيرفرين
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ token })
+            });
+            let data = await res.json();
+            if (data.status === "success") {
+                // تخزين بيانات المستخدم في localStorage (اختياري)
+                localStorage.setItem("user", JSON.stringify(data.user));
+                // توجيه للداشبورد
+                window.location.href = "dashboard.html";
+            } else {
+                document.getElementById("msg").innerText = data.message;
+            }
+        }
+        window.onload = doLogin;
+    </script>
+</head>
+<body>
+    <h2>Logging in...</h2>
+    <div id="msg"></div>
+</body>
+</html>
