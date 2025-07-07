@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Store | NutroCloud</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      background: #111;
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 30px;
+      text-align: center;
+    }
+    h1 {
+      color: #ffcc00;
+    }
+    #user-info {
+      margin-bottom: 30px;
+    }
+    .product {
+      background: #222;
+      border: 1px solid #ffcc00;
+      border-radius: 10px;
+      padding: 15px;
+      margin: 10px;
+      display: inline-block;
+      width: 220px;
+    }
+    .product img {
+      width: 100%;
+      border-radius: 10px;
+    }
+    .product h3 {
+      margin: 10px 0 5px;
+    }
+    .product p {
+      color: #ccc;
+    }
+    button {
+      background: #ffcc00;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #ffaa00;
+    }
+  </style>
+</head>
+<body>
+  <h1>🛒 NutroCloud Store</h1>
+  <div id="user-info">
+    <strong>Username:</strong> <span id="username">Loading...</span><br>
+    <strong>Coins:</strong> <span id="coins">0</span>
+  </div>
+
+  <div id="products">
+    <!-- Products will be injected here -->
+  </div>
+
+  <script>
+    const products = [
+      { id: 1, name: "Minecraft Plugin", price: 10, image: "https://via.placeholder.com/200x100?text=Minecraft" },
+      { id: 2, name: "Free Hosting", price: 20, image: "https://via.placeholder.com/200x100?text=Hosting" },
+      { id: 3, name: "Discord Nitro", price: 50, image: "https://via.placeholder.com/200x100?text=Nitro" }
+    ];
+
+    let username = "";
+    let coins = 0;
+
+    async function loadUser() {
+      const res = await fetch("https://freeearn.nutro.cloud/login.php", { credentials: "include" });
+      const data = await res.json();
+      if (data.loggedIn) {
+        username = data.user.username;
+        document.getElementById("username").innerText = username;
+
+        // Get user coins
+        const resCoins = await fetch("https://freeearn.nutro.cloud/getCoins.php", { credentials: "include" });
+        const coinsData = await resCoins.json();
+        coins = coinsData.coins || 0;
+        document.getElementById("coins").innerText = coins;
+      } else {
+        alert("Please log in first.");
+        window.location.href = "login.html";
+      }
+    }
+
+    function renderProducts() {
+      const container = document.getElementById("products");
+      products.forEach(product => {
+        const card = document.createElement("div");
+        card.className = "product";
+        card.innerHTML = `
+          <img src="${product.image}" alt="${product.name}">
+          <h3>${product.name}</h3>
+          <p>Price: ${product.price} coins</p>
+          <button onclick="buyProduct(${product.id})">Buy</button>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    async function buyProduct(productId) {
+      const product = products.find(p => p.id === productId);
+      if (!product) return;
+
+      if (coins < product.price) {
+        alert("You don't have enough coins!");
+        return;
+      }
+
+      const confirmed = confirm(`Are you sure you want to buy ${product.name} for ${product.price} coins?`);
+      if (!confirmed) return;
+
+      const res = await fetch("https://freeearn.nutro.cloud/buy.php", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId: product.id })
+      });
+
+      const result = await res.json();
+      if (result.status === "success") {
+        alert("Purchase successful!");
+        coins -= product.price;
+        document.getElementById("coins").innerText = coins;
+      } else {
+        alert(result.message || "Error during purchase");
+      }
+    }
+
+    loadUser().then(renderProducts);
+  </script>
+</body>
+</html>
