@@ -178,85 +178,100 @@
     <strong>Username:</strong> <span id="username">Loading...</span><br>
     <strong>Coins:</strong> <span id="coins">0</span>
   </div>
-
+<div id="ads-container">
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-format="autorelaxed"
+         data-ad-client="ca-pub-9474857494274232"
+         data-ad-slot="7886082465"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+</div>
   <div id="products">
     <!-- Products will be injected here -->
   </div>
 
-  <script>
-    const products = [
-      { id: 1, name: "Minecraft Plugin", price: 10, image: "https://via.placeholder.com/200x100?text=Minecraft" },
-      { id: 2, name: "Free Hosting", price: 20, image: "https://via.placeholder.com/200x100?text=Hosting" },
-      { id: 3, name: "Discord Nitro", price: 50, image: "https://via.placeholder.com/200x100?text=Nitro" }
-    ];
+<script>
+  const products = [
+    { id: 1, name: "1x CPU", price: 40, image: "https://via.placeholder.com/200x100?text=CPU" },
+    { id: 2, name: "1x RAM", price: 40, image: "https://via.placeholder.com/200x100?text=RAM" },
+    { id: 3, name: "1x Disk", price: 140, image: "https://via.placeholder.com/200x100?text=Disk" },
+    { id: 4, name: "Renew server for 1m", price: 50, image: "https://via.placeholder.com/200x100?text=Renew" },
+    { id: 5, name: "1x Server Slot", price: 200, image: "https://via.placeholder.com/200x100?text=Slot" }
+  ];
 
-    let username = "";
-    let coins = 0;
+  let username = "";
+  let coins = 0;
 
-    async function loadUser() {
-      const res = await fetch("https://freeearn.nutro.cloud/login.php", { credentials: "include" });
-      const data = await res.json();
-      if (data.loggedIn) {
-        username = data.user.username;
-        document.getElementById("username").innerText = username;
+  async function loadUser() {
+    const res = await fetch("https://freeearn.nutro.cloud/login.php", { credentials: "include" });
+    const data = await res.json();
+    if (data.loggedIn) {
+      username = data.user.username;
+      document.getElementById("username").innerText = username;
 
-        // Get user coins
-        const resCoins = await fetch("https://freeearn.nutro.cloud/getCoins.php", { credentials: "include" });
-        const coinsData = await resCoins.json();
-        coins = coinsData.coins || 0;
-        document.getElementById("coins").innerText = coins;
-      } else {
-        alert("Please log in first.");
-        window.location.href = "login.html";
-      }
+      // Get user coins
+      const resCoins = await fetch("https://freeearn.nutro.cloud/getCoins.php", { credentials: "include" });
+      const coinsData = await resCoins.json();
+      coins = coinsData.coins || 0;
+      document.getElementById("coins").innerText = coins;
+    } else {
+      alert("Please log in first.");
+      window.location.href = "login.html";
+    }
+  }
+
+  function renderProducts() {
+    const container = document.getElementById("products");
+    container.innerHTML = '<div class="row justify-content-center">';
+    products.forEach(product => {
+      container.innerHTML += `
+        <div class="col-md-4">
+          <div class="product mb-4 p-3 shadow-sm">
+            <img src="${product.image}" alt="${product.name}" class="img-fluid rounded">
+            <h3 class="mt-3">${product.name}</h3>
+            <p>Price: ${product.price} coins</p>
+            <button class="btn btn-warning font-weight-bold" onclick="buyProduct(${product.id})">Buy</button>
+          </div>
+        </div>
+      `;
+    });
+    container.innerHTML += '</div>';
+  }
+
+  async function buyProduct(productId) {
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+
+    if (coins < product.price) {
+      alert("You don't have enough coins!");
+      return;
     }
 
-    function renderProducts() {
-      const container = document.getElementById("products");
-      products.forEach(product => {
-        const card = document.createElement("div");
-        card.className = "product";
-        card.innerHTML = `
-          <img src="${product.image}" alt="${product.name}">
-          <h3>${product.name}</h3>
-          <p>Price: ${product.price} coins</p>
-          <button onclick="buyProduct(${product.id})">Buy</button>
-        `;
-        container.appendChild(card);
-      });
+    const confirmed = confirm(`Are you sure you want to buy ${product.name} for ${product.price} coins?`);
+    if (!confirmed) return;
+
+    const res = await fetch("https://freeearn.nutro.cloud/buy.php", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ productId: product.id })
+    });
+
+    const result = await res.json();
+    if (result.status === "success") {
+      alert("Purchase successful!");
+      coins -= product.price;
+      document.getElementById("coins").innerText = coins;
+    } else {
+      alert(result.message || "Error during purchase");
     }
+  }
 
-    async function buyProduct(productId) {
-      const product = products.find(p => p.id === productId);
-      if (!product) return;
+  loadUser().then(renderProducts);
+</script>
 
-      if (coins < product.price) {
-        alert("You don't have enough coins!");
-        return;
-      }
-
-      const confirmed = confirm(`Are you sure you want to buy ${product.name} for ${product.price} coins?`);
-      if (!confirmed) return;
-
-      const res = await fetch("https://freeearn.nutro.cloud/buy.php", {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId: product.id })
-      });
-
-      const result = await res.json();
-      if (result.status === "success") {
-        alert("Purchase successful!");
-        coins -= product.price;
-        document.getElementById("coins").innerText = coins;
-      } else {
-        alert(result.message || "Error during purchase");
-      }
-    }
-
-    loadUser().then(renderProducts);
-  </script>
 <div id="ads-container">
     <ins class="adsbygoogle"
          style="display:block"
