@@ -16,6 +16,29 @@
       <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">      <link href="css/style.css" rel="stylesheet">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9474857494274232"
      crossorigin="anonymous"></script>
+<script>
+        async function checkSession() {
+            let res = await fetch("https://freeearn.nutro.cloud/login.php", {
+                method: "GET",
+                credentials: "include"
+            });
+            let data = await res.json();
+            if (!data.loggedIn) {
+                // رجع المستخدم للوجن
+                window.location.href = "login.html";
+                return;
+            }
+            document.getElementById("user").innerText = data.user.username;
+        }
+        function logout() {
+            fetch("https://freeearn.nutro.cloud/logout.php", {
+                credentials: "include"
+            }).then(() => {
+                window.location.href = "login.html";
+            });
+        }
+        window.onload = checkSession;
+    </script>
    </head>
    
    <body class="sb-nav-fixed">
@@ -125,7 +148,7 @@
                </div>
                <div class="sb-sidenav-footer">
                   <div class="small">Logged in as:</div>
-                  NutroUser
+                  <span id="user"></span>
                </div>
             </nav>
          </div>
