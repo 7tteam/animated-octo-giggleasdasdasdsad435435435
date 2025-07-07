@@ -1,133 +1,134 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Earn Coins | NutroCloud</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <title>Earn Coins Securely</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
   <style>
     body {
-      background-color: #111;
+      background: #111;
       color: #fff;
       font-family: 'Segoe UI', sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      flex-direction: column;
-    }
-
-    .box {
-      background: #222;
-      border: 2px solid #ffcc00;
-      padding: 30px;
-      border-radius: 15px;
-      max-width: 400px;
       text-align: center;
+      padding-top: 40px;
+    }
+    .container {
+      background: #222;
+      padding: 25px;
+      border-radius: 15px;
+      border: 2px solid #ffcc00;
+      display: inline-block;
       box-shadow: 0 0 20px rgba(255, 204, 0, 0.3);
     }
-
     h1 {
-      font-size: 2rem;
       color: #ffcc00;
-      margin-bottom: 10px;
     }
-
     #timer {
-      margin: 15px 0;
-      font-size: 1.1rem;
+      margin: 20px 0;
+      font-size: 1.3rem;
     }
-
     button {
       background: #ffcc00;
+      padding: 10px 20px;
       border: none;
-      padding: 12px 20px;
+      border-radius: 8px;
       font-weight: bold;
       color: #000;
-      border-radius: 8px;
       cursor: pointer;
       margin-top: 10px;
-      transition: background 0.3s ease;
     }
-
     button:hover {
       background: #ffaa00;
     }
-
-    .g-recaptcha {
-      margin: 15px 0;
+    #claim-section {
+      display: none;
     }
   </style>
 </head>
 <body>
-  <div class="box">
-    <h1>🎁 Earn Daily Coins</h1>
-    <p>Watch ads and earn 10 coins daily!</p>
-    <div id="timer">Please wait 120 seconds...</div>
+  <div class="container">
+    <h1>💰 Earn Coins</h1>
+    <p>Watch ads for 120 seconds to earn 10 coins.</p>
 
-    <div id="claim-section" style="display: none;">
-      <div class="g-recaptcha" data-sitekey="YOUR_SITE_KEY_HERE"></div>
-      <button onclick="verifyCaptcha()">Claim Coins</button>
+    <div id="ad-area">
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-9474857494274232"
+           data-ad-slot="7886082465"
+           data-ad-format="autorelaxed"></ins>
+    </div>
+
+    <div id="timer">⏳ Please stay on the page for 120 seconds...</div>
+
+    <div id="claim-section">
+      <div class="g-recaptcha" data-sitekey="6LfCoL4qAAAAAN9hsfJIeseeTuEPwk5-LIowW97B"></div>
+      <button onclick="claimCoins()">Claim Coins</button>
     </div>
   </div>
 
   <script>
     let countdown = 120;
-    let currentUser = null;
+    let interval = null;
+    let userActive = true;
 
-    // Fetch user session
-    async function fetchUser() {
-      const res = await fetch("https://freeearn.nutro.cloud/login.php", {
-        credentials: "include"
-      });
-      const data = await res.json();
-      if (data.loggedIn && data.user) {
-        currentUser = data.user;
-      } else {
-        alert("You must be logged in to earn coins.");
-        window.location.href = "https://shop.nutro.cloud";
-      }
+    // Protect against AdBlock
+    function checkAdBlock() {
+      setTimeout(() => {
+        let ad = document.querySelector("ins.adsbygoogle");
+        if (!ad || ad.innerHTML.length === 0) {
+          alert("⚠️ Please disable AdBlock to earn coins.");
+          window.location.href = "https://www.nutro.cloud";
+        }
+      }, 3000);
     }
 
-    // Countdown then show claim section
+    // Only allow countdown if user is on tab
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+        userActive = false;
+      } else {
+        userActive = true;
+      }
+    });
+
+    // Countdown function with tab focus enforcement
     function startCountdown() {
       const timer = document.getElementById("timer");
-      const claimSection = document.getElementById("claim-section");
-      const interval = setInterval(() => {
-        timer.textContent = `Please wait ${countdown} seconds...`;
-        countdown--;
-        if (countdown <= 0) {
-          clearInterval(interval);
-          timer.style.display = "none";
-          claimSection.style.display = "block";
+      interval = setInterval(() => {
+        if (userActive) {
+          timer.textContent = `⏳ Please stay on the page for ${countdown} seconds...`;
+          countdown--;
+          if (countdown <= 0) {
+            clearInterval(interval);
+            timer.style.display = "none";
+            document.getElementById("claim-section").style.display = "block";
+          }
+        } else {
+          timer.textContent = "⛔ You left the tab! Stay focused to continue...";
         }
       }, 1000);
     }
 
-    // Check if user already claimed today
-    function checkDailyAccess() {
-      const stored = localStorage.getItem("afkLastClaim");
-      if (stored) {
-        const last = new Date(stored);
-        const now = new Date();
-        const diff = (now - last) / (1000 * 60 * 60);
+    function saveAccessTime() {
+      localStorage.setItem("afkLastClaim", new Date().toISOString());
+    }
+
+    function checkIfClaimedToday() {
+      const last = localStorage.getItem("afkLastClaim");
+      if (last) {
+        const diff = (new Date() - new Date(last)) / (1000 * 3600);
         if (diff < 24) {
-          alert("You already claimed your coins today. Try again later.");
+          alert("You already claimed your coins today. Come back tomorrow!");
           window.location.href = "https://shop.nutro.cloud";
         }
       }
     }
 
-    // Store access time
-    function saveAccessTime() {
-      localStorage.setItem("afkLastClaim", new Date().toISOString());
-    }
-
-    // Send request to earn.php
-    function verifyCaptcha() {
-      const token = grecaptcha.getResponse();
-      if (!token) {
-        alert("Please complete the CAPTCHA!");
+    function claimCoins() {
+      const captcha = grecaptcha.getResponse();
+      if (!captcha) {
+        alert("❌ Please verify you're human.");
         return;
       }
 
@@ -138,25 +139,26 @@
         .then(res => res.json())
         .then(data => {
           if (data.status === "success") {
-            alert("✅ You earned 10 coins!");
+            alert("🎉 You earned 10 coins!");
             saveAccessTime();
             window.location.href = "https://shop.nutro.cloud";
           } else {
-            alert("❌ " + data.message);
+            alert("⚠️ " + data.message);
           }
         })
-        .catch(err => {
-          alert("Error connecting to server.");
-          console.error(err);
-        });
+        .catch(() => alert("❌ Connection error."));
     }
 
-    // Run on load
-    window.onload = async () => {
-      await fetchUser();
-      checkDailyAccess();
+    // Init
+    window.onload = () => {
+      (adsbygoogle = window.adsbygoogle || []).push({});
+      checkAdBlock();
+      checkIfClaimedToday();
       startCountdown();
     };
   </script>
+
+  <script src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9474857494274232"
+          crossorigin="anonymous" async></script>
 </body>
 </html>
