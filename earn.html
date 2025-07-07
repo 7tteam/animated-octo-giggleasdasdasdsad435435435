@@ -123,132 +123,74 @@
 </style>
 
 <script>
-    let countdown = 120; // Countdown in seconds
-    let interval;
-    let userIP = ""; // Variable to store IP address
-    let countdownPaused = false; // Flag to track if countdown is paused
+    let currentUser = null;
 
-    // Get user IP address
-    async function fetchIP() {
-        try {
-            const response = await fetch("https://api.ipify.org?format=json");
-            const data = await response.json();
-            userIP = data.ip;
-        } catch (error) {
-            console.error("Failed to fetch IP:", error);
-        }
-    }
-
-    // Start countdown
-    function startCountdown() {
-        interval = setInterval(() => {
-            if (!countdownPaused) {
-                document.getElementById("timer").textContent = `Please wait ${countdown} seconds...`;
-                countdown--;
-                if (countdown < 0) {
-                    clearInterval(interval);
-                    showInputField();
-                }
-            }
-        }, 1000);
-    }
-
-    // Show username input field after countdown
-    function showInputField() {
-        document.getElementById("username-section").style.display = "block";
-        document.getElementById("timer").style.display = "none";
-    }
-
-    // Send data to Discord webhook
-    function sendToDiscord() {
-        const username = document.getElementById("username").value.trim();
-
-        if (username === "") {
-            alert("Please enter a username!");
-            return;
-        }
-
-        // Check if user has already submitted this username
-        if (localStorage.getItem("submittedUsername")) {
-            alert("You have already submitted your username!");
-            return;
-        }
-
-        // Send data to Discord via webhook
-        const webhookUrl = "https://discord.com/api/webhooks/1276560662331527270/Fu0tT0dO2zqH3pBfJ1AL2CrOyRTBlEcQ-pJw7wLbe7kn6HmKHJvzCVD19fvR7vfyUhK2"; // Your webhook URL
-        fetch(webhookUrl, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                content: `📩 **New Submission:**
-                - Username: ${username}
-                - IP Address: ${userIP}`
-            })
-        }).then(() => {
-            // Store the username and the timestamp of submission in localStorage
-            const submissionData = {
-                username: username,
-                timestamp: new Date().toISOString()
-            };
-            localStorage.setItem("submittedUsername", JSON.stringify(submissionData));
-            alert("Submission successful! You will be redirected.");
-            window.location.href = "https://shop.nutro.cloud"; // Redirect user after submission
-        }).catch(err => {
-            console.error("Error sending data to Discord:", err);
-            alert("An error occurred, please try again.");
+    async function fetchCurrentUser() {
+        const res = await fetch("https://freeearn.nutro.cloud/login.php", {
+            credentials: "include"
         });
+
+        const data = await res.json();
+        if (data.loggedIn && data.user) {
+            currentUser = data.user;
+        } else {
+            window.location.href = "https://shop.nutro.cloud";
+        }
     }
 
-    // Verify CAPTCHA
+    function saveAccessTime() {
+        localStorage.setItem("lastAFKAccess", new Date().toISOString());
+    }
+
+    function checkDailyAccess() {
+        const last = localStorage.getItem("lastAFKAccess");
+        if (last) {
+            const diff = (new Date() - new Date(last)) / 3600000;
+            if (diff < 24) {
+                alert("You can only claim coins once every 24 hours.");
+                window.location.href = "https://shop.nutro.cloud";
+            }
+        }
+    }
+
     function verifyCaptcha() {
         const response = grecaptcha.getResponse();
         if (response.length === 0) {
             alert("Please complete the CAPTCHA!");
             return false;
         }
-        sendToDiscord();
+
+        // أرسل البيانات للسيرفر
+        fetch("https://freeearn.nutro.cloud/earn.php", {
+            method: "POST",
+            credentials: "include"
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === "success") {
+                alert("You earned 10 coins!");
+                saveAccessTime();
+                window.location.href = "https://shop.nutro.cloud";
+            } else {
+                alert(data.message);
+            }
+        }).catch(err => {
+            console.error(err);
+            alert("Error sending data!");
+        });
+
         return true;
     }
 
-    // Check if 24 hours have passed since submission
-    function checkSubmissionTime() {
-        const submissionData = JSON.parse(localStorage.getItem("submittedUsername"));
-        if (submissionData) {
-            const submissionTime = new Date(submissionData.timestamp);
-            const currentTime = new Date();
-            const diffInHours = (currentTime - submissionTime) / (1000 * 3600); // Difference in hours
-
-            if (diffInHours < 24) {
-                alert("You can submit again after 24 hours.");
-                window.location.href = "https://shop.nutro.cloud"; // Redirect if less than 24 hours
-            }
-        }
-    }
-
-    function checkAdBlock() {
-        setTimeout(function () {
-            let adContainer = document.getElementById("ads-container");
-            
-            // إذا لم يتم تحميل الإعلان، قم بعرض التحذير وإخفاء المحتوى
-            if (!adContainer || adContainer.offsetHeight === 0) {
-                document.getElementById("adblock-warning").style.display = "block";
-            } else {
-                document.getElementById("content").style.display = "block";
-            }
-        }, 3000); // الانتظار قليلاً حتى يتم تحميل الإعلانات
-    }
-    window.onload = checkAdBlock;
-
-    // Initialize the page
-    window.onload = function() {
+    // Initialize
+    window.onload = async function () {
+        await fetchCurrentUser();
+        checkDailyAccess();
         fetchIP();
-        checkSubmissionTime(); // Check if 24 hours have passed
         startCountdown();
     }
-
 </script>
+
 </head>
 <body class="sb-nav-fixed">
     <nav class="sb-topnav navbar navbar-expand navbar-light shadow-sm osahan-nav-top bg-white">
