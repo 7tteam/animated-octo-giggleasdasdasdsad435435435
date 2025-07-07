@@ -17,28 +17,47 @@
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9474857494274232"
      crossorigin="anonymous"></script>
 <script>
-        async function checkSession() {
-            let res = await fetch("https://freeearn.nutro.cloud/login.php", {
-                method: "GET",
-                credentials: "include"
-            });
-            let data = await res.json();
-            if (!data.loggedIn) {
-                // رجع المستخدم للوجن
-                window.location.href = "login.html";
-                return;
-            }
-            document.getElementById("user").innerText = data.user.username;
-        }
-        function logout() {
-            fetch("https://freeearn.nutro.cloud/logout.php", {
-                credentials: "include"
-            }).then(() => {
-                window.location.href = "login.html";
-            });
-        }
-        window.onload = checkSession;
-    </script>
+  let username = "";
+  let coins = 0;
+
+  async function loadUser() {
+    try {
+      // 1. التحقق من تسجيل الدخول
+      const loginRes = await fetch("https://freeearn.nutro.cloud/login.php", {
+        credentials: "include",
+      });
+      const loginData = await loginRes.json();
+
+      if (!loginData.loggedIn) {
+        alert("Please log in first.");
+        window.location.href = "login.html";
+        return;
+      }
+
+      username = loginData.user.username;
+      document.getElementById("username").innerText = username;
+      document.getElementById("user").innerText = username;
+
+      // 2. جلب الكوينات من الباك
+      const coinsRes = await fetch("https://freeearn.nutro.cloud/getCoins.php", {
+        credentials: "include",
+      });
+      const coinsData = await coinsRes.json();
+
+      coins = coinsData.coins || 0;
+
+      // عرض الكوينات في الصفحة
+      document.getElementById("coins").innerText = coins;
+      document.getElementById("user-coins").innerText = coins;
+    } catch (error) {
+      console.error("Error loading user data:", error);
+    }
+  }
+
+  // تنفيذ التحميل عند بداية الصفحة
+  loadUser();
+</script>
+
    </head>
    
    <body class="sb-nav-fixed">
@@ -144,10 +163,14 @@
                   </div>
                
                </div>
-               <div class="sb-sidenav-footer">
-                  <div class="small">Logged in as:</div>
-                  <span id="user"></span>
-               </div>
+              <div class="sb-sidenav-footer">
+  <div class="small">Logged in as:</div>
+  <strong><span id="user">Loading...</span></strong>
+  <br>
+  <div class="small">Coins:</div>
+  <strong><span id="user-coins">0</span></strong>
+</div>
+
             </nav>
          </div>
          <div id="layoutSidenav_content">
