@@ -17,46 +17,45 @@
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9474857494274232"
      crossorigin="anonymous"></script>
 <script>
-  let username = "";
-  let coins = 0;
+async function loadUser() {
+  try {
+    const loginRes = await fetch("https://freeearn.nutro.cloud/login.php", {
+      credentials: "include",
+    });
+    const loginData = await loginRes.json();
 
-  async function loadUser() {
-    try {
-      // 1. التحقق من تسجيل الدخول
-      const loginRes = await fetch("https://freeearn.nutro.cloud/login.php", {
-        credentials: "include",
-      });
-      const loginData = await loginRes.json();
-
-      if (!loginData.loggedIn) {
-        alert("Please log in first.");
-        window.location.href = "login.html";
-        return;
-      }
-
-      username = loginData.user.username;
-      document.getElementById("username").innerText = username;
-      document.getElementById("user").innerText = username;
-
-      // 2. جلب الكوينات من الباك
-      const coinsRes = await fetch("https://freeearn.nutro.cloud/getCoins.php", {
-        credentials: "include",
-      });
-      const coinsData = await coinsRes.json();
-
-      coins = coinsData.coins || 0;
-
-      // عرض الكوينات في الصفحة
-      document.getElementById("coins").innerText = coins;
-      document.getElementById("user-coins").innerText = coins;
-    } catch (error) {
-      console.error("Error loading user data:", error);
+    if (!loginData.loggedIn) {
+      alert("Please log in first.");
+      window.location.href = "login.html";
+      return;
     }
-  }
 
-  // تنفيذ التحميل عند بداية الصفحة
-  loadUser();
+    const username = loginData.user.username;
+    const usernameEl = document.getElementById("username");
+    const userEl = document.getElementById("user");
+
+    if (usernameEl) usernameEl.innerText = username;
+    if (userEl) userEl.innerText = username;
+
+    const coinsRes = await fetch("https://freeearn.nutro.cloud/getCoins.php", {
+      credentials: "include",
+    });
+    const coinsData = await coinsRes.json();
+
+    const coins = coinsData.coins || 0;
+
+    const coinsEl = document.getElementById("coins");
+    const userCoinsEl = document.getElementById("user-coins");
+
+    if (coinsEl) coinsEl.innerText = coins;
+    if (userCoinsEl) userCoinsEl.innerText = coins;
+  } catch (err) {
+    console.error("Error loading user data:", err);
+  }
+}
+loadUser();
 </script>
+
 
    </head>
    
