@@ -4,30 +4,38 @@
     <title>Login</title>
     <script>
         async function doLogin() {
-            // الحصول على التوكن من الرابط
             const params = new URLSearchParams(window.location.search);
             const token = params.get("token");
+
             if (!token) {
-                document.getElementById("msg").innerText = "No token!";
+                // لا يوجد توكن → التوجيه للدومين الآخر
+                window.location.href = "https://free.nutro.cloud";
                 return;
             }
-            // إرسال التوكن للباك اند
-            let res = await fetch("https://freeearn.nutro.cloud/login.php", {
-                method: "POST",
-                credentials: "include", // ضروري لإرسال الكوكيز بين السيرفرين
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ token })
-            });
-            let data = await res.json();
-            if (data.status === "success") {
-                // تخزين بيانات المستخدم في localStorage (اختياري)
-                localStorage.setItem("user", JSON.stringify(data.user));
-                // توجيه للداشبورد
-                window.location.href = "index.html";
-            } else {
-                document.getElementById("msg").innerText = data.message;
+
+            try {
+                let res = await fetch("https://freeearn.nutro.cloud/login.php", {
+                    method: "POST",
+                    credentials: "include",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ token })
+                });
+
+                let data = await res.json();
+
+                if (data.status === "success") {
+                    localStorage.setItem("user", JSON.stringify(data.user));
+                    window.location.href = "index.html";
+                } else {
+                    // فشل في تسجيل الدخول → التوجيه للدومين الآخر
+                    window.location.href = "https://free.nutro.cloud";
+                }
+            } catch (e) {
+                // خطأ في الاتصال أو الاستجابة → التوجيه للدومين الآخر
+                window.location.href = "https://free.nutro.cloud";
             }
         }
+
         window.onload = doLogin;
     </script>
 </head>
