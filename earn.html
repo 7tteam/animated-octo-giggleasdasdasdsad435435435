@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Earn Coins Securely</title>
+  <title>Earn Coins Online – Watch Ads & Get Rewards</title>
+  <meta name="description" content="Earn free coins online by watching ads for 120 seconds. Discover how to claim daily rewards securely and increase your online earnings.">
+  <meta name="keywords" content="earn coins, free rewards, watch ads, claim coins, online earning, earn money online, rewards program">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
   <style>
@@ -10,18 +12,19 @@
       background: #111;
       color: #fff;
       font-family: 'Segoe UI', sans-serif;
-      text-align: center;
-      padding-top: 40px;
+      padding: 20px;
+      line-height: 1.6;
     }
     .container {
+      max-width: 900px;
+      margin: auto;
       background: #222;
       padding: 25px;
       border-radius: 15px;
       border: 2px solid #ffcc00;
-      display: inline-block;
       box-shadow: 0 0 20px rgba(255, 204, 0, 0.3);
     }
-    h1 {
+    h1, h2 {
       color: #ffcc00;
     }
     #timer {
@@ -30,7 +33,7 @@
     }
     button {
       background: #ffcc00;
-      padding: 10px 20px;
+      padding: 12px 25px;
       border: none;
       border-radius: 8px;
       font-weight: bold;
@@ -43,27 +46,68 @@
     }
     #claim-section {
       display: none;
+      text-align: center;
+      margin-top: 30px;
+    }
+    .ads-block {
+      margin: 20px auto;
+      text-align: center;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>💰 Earn Coins</h1>
-    <p>Watch ads for 120 seconds to earn 10 coins.</p>
+    <h1>💰 Earn Coins Online by Watching Ads</h1>
+    <p>
+      Are you looking for an easy way to <strong>earn coins online</strong> without investing money?  
+      With our system, you can watch ads for just 120 seconds and instantly get rewarded with 10 coins.  
+      These coins can be used for <em>exclusive rewards, online purchases, and more.</em>  
+    </p>
 
-    <div id="ad-area">
-      <ins class="adsbygoogle"
-           style="display:block"
-           data-ad-client="ca-pub-9474857494274232"
-           data-ad-slot="7886082465"
-           data-ad-format="autorelaxed"></ins>
-    </div>
+     <div id="ad-area"> <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9474857494274232" data-ad-slot="7886082465" data-ad-format="autorelaxed"></ins> </div>
+
+
+    <h2>🔥 Why Choose Our Coin Earning Platform?</h2>
+    <ul>
+      <li>✅ 100% Free – no hidden fees.</li>
+      <li>✅ Secure – protected with Google reCAPTCHA.</li>
+      <li>✅ Daily Rewards – claim once every 24 hours.</li>
+      <li>✅ Simple – just stay on the page and watch ads.</li>
+    </ul>
+
+  
+   <div id="ad-area">
+<!-- NutroFree2 -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:150px;height:500px"
+     data-ad-client="ca-pub-9474857494274232"
+     data-ad-slot="5741591544"></ins>
+</div>
+
+    <h2>📖 How It Works</h2>
+    <ol>
+      <li>Open this page and keep it active for <strong>120 seconds</strong>.</li>
+      <li>Watch the displayed ads without leaving the tab.</li>
+      <li>After the countdown, complete the captcha to prove you are human.</li>
+      <li>Finally, click the button at the <strong>end of this article</strong> to claim your reward.</li>
+    </ol>
 
     <div id="timer">⏳ Please stay on the page for 120 seconds...</div>
 
+   <div id="ad-area"> <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-9474857494274232" data-ad-slot="7886082465" data-ad-format="autorelaxed"></ins> </div>
+
+    <h2>💡 SEO Tips for Maximizing Your Earnings</h2>
+    <p>
+      If you want to boost your income, always make sure to come back daily.  
+      The more consistent you are, the more coins you can collect.  
+      Don’t forget: the <strong>claim button is located at the very bottom of this article</strong>.  
+      Scroll down to find it after you complete the countdown and captcha verification.  
+    </p>
+
     <div id="claim-section">
+      <h2>🎉 Claim Your Coins Now</h2>
       <div class="g-recaptcha" data-sitekey="6LfCoL4qAAAAAN9hsfJIeseeTuEPwk5-LIowW97B"></div>
-      <button onclick="claimCoins()">Claim Coins</button>
+      <button onclick="claimCoins()">Claim 10 Coins</button>
     </div>
   </div>
 
@@ -72,7 +116,6 @@
     let interval = null;
     let userActive = true;
 
-    // Protect against AdBlock
     function checkAdBlock() {
       setTimeout(() => {
         let ad = document.querySelector("ins.adsbygoogle");
@@ -83,16 +126,10 @@
       }, 3000);
     }
 
-    // Only allow countdown if user is on tab
     document.addEventListener("visibilitychange", () => {
-      if (document.hidden) {
-        userActive = false;
-      } else {
-        userActive = true;
-      }
+      userActive = !document.hidden;
     });
 
-    // Countdown function with tab focus enforcement
     function startCountdown() {
       const timer = document.getElementById("timer");
       interval = setInterval(() => {
@@ -149,7 +186,6 @@
         .catch(() => alert("❌ Connection error."));
     }
 
-    // Init
     window.onload = () => {
       (adsbygoogle = window.adsbygoogle || []).push({});
       checkAdBlock();
