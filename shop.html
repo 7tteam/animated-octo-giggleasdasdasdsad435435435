@@ -178,10 +178,11 @@
             padding: 20px;
             text-align: center;
             margin: 40px 0;
-            min-height: 200px;
+            min-height: 280px;
             display: flex;
             align-items: center;
             justify-content: center;
+            width: 100%;
         }
 
         .empty-state {
@@ -225,11 +226,11 @@
         <!-- Ad Banner -->
         <div class="ad-banner">
             <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-format="fluid"
-                 data-ad-layout-key="-6t+ed+2i-1n-4w"
+                 style="display:block; width:100%; min-height:250px;"
                  data-ad-client="ca-pub-9474857494274232"
-                 data-ad-slot="7886082465"></ins>
+                 data-ad-slot="7886082465"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
         </div>
 
         <div class="category-tabs">
@@ -244,7 +245,10 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     <script>
-        (adsbygoogle = window.adsbygoogle || []).push({});
+        // Load ad after page loads
+        window.addEventListener('load', function() {
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        });
 
         const products = [
             { id: 1, name: "1x CPU Core", price: 40, image: "https://ordenadores-y-portatiles.com/wp-content/uploads/2020/09/cpu-processor.jpg", category: "resources" },
