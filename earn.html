@@ -152,10 +152,11 @@
             padding: 20px;
             text-align: center;
             margin: 24px 0;
-            min-height: 250px;
+            min-height: 280px;
             display: flex;
             align-items: center;
             justify-content: center;
+            width: 100%;
         }
 
         .reward-info {
@@ -208,11 +209,11 @@
         <!-- Ad Space 1 -->
         <div class="ad-space">
             <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-format="fluid"
-                 data-ad-layout-key="-6t+ed+2i-1n-4w"
+                 style="display:block; width:100%; min-height:250px;"
                  data-ad-client="ca-pub-9474857494274232"
-                 data-ad-slot="7886082465"></ins>
+                 data-ad-slot="7886082465"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
         </div>
 
         <div id="articlesContainer"></div>
@@ -220,10 +221,11 @@
         <!-- Ad Space 2 -->
         <div class="ad-space">
             <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-format="autorelaxed"
+                 style="display:block; width:100%; min-height:250px;"
                  data-ad-client="ca-pub-9474857494274232"
-                 data-ad-slot="7886082465"></ins>
+                 data-ad-slot="7886082465"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
         </div>
     </div>
 
@@ -231,9 +233,6 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     <script src="js/articles.js"></script>
     <script>
-        (adsbygoogle = window.adsbygoogle || []).push({});
-        (adsbygoogle = window.adsbygoogle || []).push({});
-
         let timeLeft = 120;
         const totalTime = 120;
         let timerInterval;
@@ -299,17 +298,23 @@
                 container.innerHTML += `
                     <div class="ad-space">
                         <ins class="adsbygoogle"
-                             style="display:block"
-                             data-ad-format="fluid"
+                             style="display:block; width:100%; min-height:250px;"
                              data-ad-client="ca-pub-9474857494274232"
-                             data-ad-slot="7886082465"></ins>
+                             data-ad-slot="7886082465"
+                             data-ad-format="auto"
+                             data-full-width-responsive="true"></ins>
                     </div>
                 `;
             }
         });
 
-        // Initialize ads
-        (adsbygoogle = window.adsbygoogle || []).push({});
+        // Initialize all ads after content loads
+        window.addEventListener('load', function() {
+            const adCount = document.querySelectorAll('.adsbygoogle').length;
+            for(let i = 0; i < adCount; i++) {
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            }
+        });
 
         // Start timer
         updateTimer();
