@@ -381,93 +381,87 @@
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-    <script>
-        let username = "";
-        let coins = 0;
+<script>
+    let username = "";
+    let coins = 0;
 
-        async function loadUser() {
-            try {
-                const res = await fetch("https://freeearn.nutro.cloud/login.php", { credentials: "include" });
-                const data = await res.json();
-                
-                if (data.loggedIn) {
-                    username = data.user.username;
-                    document.getElementById("username").innerText = username;
-                    document.getElementById("topUsername").innerText = username;
+    /* =========================
+       AdBlock Protection (BEST)
+    ========================== */
+    function detectAdBlock() {
+        alert("Please disable AdBlock to continue.");
+        window.location.href = "https://nutro.cloud/adblock";
+    }
 
-                    const resCoins = await fetch("https://freeearn.nutro.cloud/getCoins.php", { credentials: "include" });
-                    const coinsData = await resCoins.json();
-                    coins = coinsData.coins || 0;
-                    
-                    document.getElementById("coins").innerText = coins;
-                    document.getElementById("topCoins").innerText = coins;
-                    document.getElementById("mainCoins").innerText = coins;
+    fetch("/ads.js", { method: "HEAD", cache: "no-store" })
+        .then(() => {
+            // No AdBlock → continue
+        })
+        .catch(() => {
+            detectAdBlock();
+        });
 
-                    // Mock stats (replace with real API)
-                    document.getElementById("statCPU").innerText = "2";
-                    document.getElementById("statRAM").innerText = "4";
-                    document.getElementById("statDisk").innerText = "50";
-                    document.getElementById("statUptime").innerText = "30";
-                } else {
-                    alert("Please log in first.");
-                    window.location.href = "login.html";
-                }
-            } catch (e) {
-                alert("Connection error");
+    /* =========================
+       Load User
+    ========================== */
+    async function loadUser() {
+        try {
+            const res = await fetch("https://freeearn.nutro.cloud/login.php", { credentials: "include" });
+            const data = await res.json();
+
+            if (data.loggedIn) {
+                username = data.user.username;
+                document.getElementById("username").innerText = username;
+                document.getElementById("topUsername").innerText = username;
+
+                const resCoins = await fetch("https://freeearn.nutro.cloud/getCoins.php", { credentials: "include" });
+                const coinsData = await resCoins.json();
+                coins = coinsData.coins || 0;
+
+                document.getElementById("coins").innerText = coins;
+                document.getElementById("topCoins").innerText = coins;
+                document.getElementById("mainCoins").innerText = coins;
+
+                // Mock stats
+                document.getElementById("statCPU").innerText = "2";
+                document.getElementById("statRAM").innerText = "4";
+                document.getElementById("statDisk").innerText = "50";
+                document.getElementById("statUptime").innerText = "30";
+
+            } else {
+                alert("Please log in first.");
                 window.location.href = "login.html";
             }
+        } catch (e) {
+            alert("Connection error");
+            window.location.href = "login.html";
         }
+    }
 
-        // Sidebar toggle
-        document.getElementById("sidebarToggle")?.addEventListener("click", function(e) {
-            e.preventDefault();
-            document.body.classList.toggle("sb-sidenav-toggled");
-        });
+    /* =========================
+       Sidebar toggle
+    ========================== */
+    document.getElementById("sidebarToggle")?.addEventListener("click", function (e) {
+        e.preventDefault();
+        document.body.classList.toggle("sb-sidenav-toggled");
+    });
 
-        // Load ads after page loads
-        window.addEventListener('load', function() {
+    /* =========================
+       Load Ads
+    ========================== */
+    window.addEventListener('load', function () {
+        try {
             (adsbygoogle = window.adsbygoogle || []).push({});
             (adsbygoogle = window.adsbygoogle || []).push({});
             (adsbygoogle = window.adsbygoogle || []).push({});
-        });
-
-        loadUser();
-    </script>
-<script>
-    // فحص AdBlock بعد 3 ثواني
-    const checkAdBlock = setTimeout(() => {
-        const adElement = document.querySelector("ins.adsbygoogle");
-
-        let isBlocked = false;
-
-        if (!adElement) {
-            isBlocked = true;
-        } else {
-            const style = window.getComputedStyle(adElement);
-
-            // AdBlock غالبًا بيخلي الإعلان hidden أو height = 0
-            if (
-                style.display === "none" ||
-                style.visibility === "hidden" ||
-                adElement.offsetHeight === 0 ||
-                adElement.offsetWidth === 0
-            ) {
-                isBlocked = true;
-            }
-
-            // AdSense بيضيف data-adsbygoogle-status لما يشتغل
-            if (!adElement.hasAttribute("data-adsbygoogle-status")) {
-                isBlocked = true;
-            }
+        } catch (e) {
+            detectAdBlock();
         }
+    });
 
-        if (isBlocked) {
-            alert("It looks like you're using an ad blocker.");
-            window.location.href = "https://nutro.cloud/adblock";
-        }
-
-    }, 3000);
+    loadUser();
 </script>
+
 
 
 
