@@ -348,32 +348,29 @@
 
         loadUser().then(renderProducts);
     </script>
-    <script>
+   <script>
 window.addEventListener('load', function () {
 
+    let adBlocked = false;
+
+    try {
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    } catch (e) {
+        adBlocked = true;
+    }
+
     setTimeout(function () {
-        const ads = document.querySelectorAll('.adsbygoogle');
 
-        let blocked = false;
-
-        if (ads.length === 0) {
-            blocked = true;
-        } else {
-            ads.forEach(ad => {
-                if (ad.offsetHeight === 0 || ad.offsetWidth === 0) {
-                    blocked = true;
-                }
-            });
-        }
-
-        if (blocked) {
-            alert("Ad Blocker Detected! Please disable it to continue.");
+        if (adBlocked) {
+            alert("Ad Blocker Detected! Please disable it.");
             window.location.href = "index.html";
         }
 
-    }, 2000); // استنى الإعلان يحمّل
+    }, 1000);
+
 });
 </script>
+
 
 </body>
 </html>
