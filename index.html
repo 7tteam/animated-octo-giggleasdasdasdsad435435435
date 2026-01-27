@@ -434,27 +434,41 @@
         loadUser();
     </script>
 <script>
-window.addEventListener('load', function () {
+    // فحص AdBlock بعد 3 ثواني
+    const checkAdBlock = setTimeout(() => {
+        const adElement = document.querySelector("ins.adsbygoogle");
 
-    let adBlocked = false;
+        let isBlocked = false;
 
-    try {
-        (adsbygoogle = window.adsbygoogle || []).push({});
-    } catch (e) {
-        adBlocked = true;
-    }
+        if (!adElement) {
+            isBlocked = true;
+        } else {
+            const style = window.getComputedStyle(adElement);
 
-    setTimeout(function () {
+            // AdBlock غالبًا بيخلي الإعلان hidden أو height = 0
+            if (
+                style.display === "none" ||
+                style.visibility === "hidden" ||
+                adElement.offsetHeight === 0 ||
+                adElement.offsetWidth === 0
+            ) {
+                isBlocked = true;
+            }
 
-        if (adBlocked) {
-            alert("Ad Blocker Detected! Please disable it.");
-            window.location.href = "index.html";
+            // AdSense بيضيف data-adsbygoogle-status لما يشتغل
+            if (!adElement.hasAttribute("data-adsbygoogle-status")) {
+                isBlocked = true;
+            }
         }
 
-    }, 10000);
+        if (isBlocked) {
+            alert("It looks like you're using an ad blocker.");
+            window.location.href = "https://nutro.cloud/adblock";
+        }
 
-});
+    }, 3000);
 </script>
+
 
 
 </body>
