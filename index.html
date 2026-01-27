@@ -462,6 +462,37 @@
     loadUser();
 </script>
 
+<script>
+(function () {
+    let adblockDetected = false;
+
+    const script = document.createElement("script");
+    script.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js";
+    script.async = true;
+
+    script.onerror = function () {
+        adblockDetected = true;
+        alert("Ad Blocker Detected! Please disable it to continue.");
+        window.location.href = "index.html";
+    };
+
+    script.onload = function () {
+        // لو وصل هنا → مفيش AdBlock
+        // نكمل عادي
+    };
+
+    document.head.appendChild(script);
+
+    // fallback أمان
+    setTimeout(function () {
+        if (typeof window.adsbygoogle === "undefined") {
+            adblockDetected = true;
+            alert("Ad Blocker Detected! Please disable it to continue.");
+            window.location.href = "index.html";
+        }
+    }, 3000);
+})();
+</script>
 
 
 
