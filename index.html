@@ -433,31 +433,34 @@
 
         loadUser();
     </script>
-    <script>
+<script>
 window.addEventListener('load', function () {
 
     setTimeout(function () {
-        const ads = document.querySelectorAll('.adsbygoogle');
+        const ads = document.querySelector('.adsbygoogle');
 
-        let blocked = false;
-
-        if (ads.length === 0) {
-            blocked = true;
-        } else {
-            ads.forEach(ad => {
-                if (ad.offsetHeight === 0 || ad.offsetWidth === 0) {
-                    blocked = true;
-                }
-            });
+        // لو العنصر مش موجود أصلاً
+        if (!ads) {
+            detectAdblock();
+            return;
         }
 
-        if (blocked) {
-            alert("Ad Blocker Detected! Please disable it to continue.");
-            window.location.href = "index.html";
+        // لو الإضافة خلت الإعلان فاضي أو مخفي
+        const adHeight = ads.offsetHeight;
+        const adDisplay = window.getComputedStyle(ads).display;
+
+        if (adHeight === 0 || adDisplay === 'none') {
+            detectAdblock();
         }
 
-    }, 10000); // استنى الإعلان يحمّل
+    }, 2000); // ندي فرصة حقيقية للإعلان يحمّل
 });
+
+function detectAdblock() {
+    alert("🚫 Ad Blocker Detected!\nPlease disable it to continue.");
+    window.location.href = "index.html";
+}
 </script>
+
 </body>
 </html>
