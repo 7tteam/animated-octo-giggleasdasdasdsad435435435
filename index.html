@@ -10,32 +10,7 @@
     <link href="css/styles.css" rel="stylesheet">
     <link href="css/dark-theme.css" rel="stylesheet">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9474857494274232" crossorigin="anonymous"></script>
-    <script>
-window.addEventListener('load', function () {
-
-    setTimeout(function () {
-        const ads = document.querySelectorAll('.adsbygoogle');
-
-        let blocked = false;
-
-        if (ads.length === 0) {
-            blocked = true;
-        } else {
-            ads.forEach(ad => {
-                if (ad.offsetHeight === 0 || ad.offsetWidth === 0) {
-                    blocked = true;
-                }
-            });
-        }
-
-        if (blocked) {
-            alert("Ad Blocker Detected! Please disable it to continue.");
-            window.location.href = "index.html";
-        }
-
-    }, 10000); // استنى الإعلان يحمّل
-});
-</script>
+    
 
     <style>
         .hero-stats {
@@ -458,5 +433,31 @@ window.addEventListener('load', function () {
 
         loadUser();
     </script>
+    <script>
+window.addEventListener('load', function () {
+
+    setTimeout(function () {
+        const ads = document.querySelectorAll('.adsbygoogle');
+
+        let blocked = false;
+
+        if (ads.length === 0) {
+            blocked = true;
+        } else {
+            ads.forEach(ad => {
+                if (ad.offsetHeight === 0 || ad.offsetWidth === 0) {
+                    blocked = true;
+                }
+            });
+        }
+
+        if (blocked) {
+            alert("Ad Blocker Detected! Please disable it to continue.");
+            window.location.href = "index.html";
+        }
+
+    }, 10000); // استنى الإعلان يحمّل
+});
+</script>
 </body>
 </html>
