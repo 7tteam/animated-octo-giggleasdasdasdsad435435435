@@ -332,31 +332,41 @@
       
     </script>
 <script>
-window.addEventListener('load', function () {
+(function () {
+    let adblockDetected = false;
 
-    let adBlocked = false;
+    const script = document.createElement("script");
+    script.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js";
+    script.async = true;
 
-    try {
-        (adsbygoogle = window.adsbygoogle || []).push({});
-    } catch (e) {
-        adBlocked = true;
-    }
+    script.onerror = function () {
+        adblockDetected = true;
+        alert("Ad Blocker Detected! Please disable it to continue.");
+        window.location.href = "index.html";
+    };
 
+    script.onload = function () {
+        // لو وصل هنا → مفيش AdBlock
+        // نكمل عادي
+    };
+
+    document.head.appendChild(script);
+
+    // fallback أمان
     setTimeout(function () {
-
-        if (adBlocked) {
-            alert("Ad Blocker Detected! Please disable it.");
+        if (typeof window.adsbygoogle === "undefined") {
+            adblockDetected = true;
+            alert("Ad Blocker Detected! Please disable it to continue.");
             window.location.href = "index.html";
         }
-
-    }, 10000);
-
-});
+    }, 3000);
+})();
 </script>
 
 
 </body>
 </html>
+
 
 
 
